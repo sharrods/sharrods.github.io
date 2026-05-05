@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sharrod Skinner — Voice Infrastructure & DevOps</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #080c10;
+  --surface: #0d1117;
+  --border: rgba(255,255,255,0.07);
+  --accent: #00e5ff;
+  --accent2: #ff6b2b;
+  --text: #e6edf3;
+  --muted: #7d8590;
+  --card: #0d1117;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+}
+.orb-1 { width: 600px; height: 600px; background: rgba(0,229,255,0.05); top: -200px; left: -100px; }
+.orb-2 { width: 500px; height: 500px; background: rgba(255,107,43,0.04); bottom: 200px; right: -100px; }
+.orb-3 { width: 400px; height: 400px; background: rgba(0,229,255,0.03); bottom: -100px; left: 30%; }
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 80px 24px 60px;
+  border-bottom: 1px solid var(--border);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,229,255,0.08);
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 28px;
+  text-transform: uppercase;
+}
+
+.badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+.hero h1 span {
+  display: block;
+  background: linear-gradient(135deg, var(--accent) 0%, #60efff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero p {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 620px;
+  margin: 0 auto 40px;
+  line-height: 1.8;
+  font-weight: 400;
+}
+
+.hero-links {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary { background: var(--accent); color: #000; font-weight: 700; }
+.btn-primary:hover { background: #33eaff; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,255,0.2); }
+.btn-orange { background: var(--accent2); color: #fff; font-weight: 700; }
+.btn-orange:hover { background: #ff8c54; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,43,0.2); }
+.btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+
+/* ── STATS ── */
+.stats {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.stat { background: var(--bg); padding: 28px 16px; text-align: center; }
+
+.stat-number {
+  font-family: 'Space Mono', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.stat-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* ── SECTION ── */
+.section {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.section-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+
+.section-sub {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 600px;
+  margin-bottom: 40px;
+}
+
+/* ── ABOUT ── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.about-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  transition: border-color 0.2s;
+}
+
+.about-card:hover { border-color: rgba(0,229,255,0.15); }
+.about-card.full { grid-column: 1 / -1; }
+
+.about-card-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--accent2);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.about-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.about-card p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.about-card p + p { margin-top: 10px; }
+
+/* ── PROJECT CARDS ── */
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.project-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.project-card.twn { border-top: 3px solid var(--accent); }
+.project-card.voip { border-top: 3px solid var(--accent2); }
+
+.project-card-inner {
+  padding: 28px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.project-card.twn .project-eyebrow { color: var(--accent); }
+.project-card.voip .project-eyebrow { color: var(--accent2); }
+
+.project-card h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.project-card p {
+  font-size: 0.83rem;
+  color: var(--muted);
+  line-height: 1.7;
+  flex: 1;
+  margin-bottom: 20px;
+}
+
+.project-stats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.project-stat {
+  text-align: center;
+}
+
+.project-stat-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.project-card.twn .project-stat-num { color: var(--accent); }
+.project-card.voip .project-stat-num { color: var(--accent2); }
+
+.project-stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.project-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.ptag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.project-card.twn .project-link {
+  background: rgba(0,229,255,0.1);
+  color: var(--accent);
+  border: 1px solid rgba(0,229,255,0.25);
+}
+
+.project-card.twn .project-link:hover {
+  background: rgba(0,229,255,0.18);
+  transform: translateX(3px);
+}
+
+.project-card.voip .project-link {
+  background: rgba(255,107,43,0.1);
+  color: var(--accent2);
+  border: 1px solid rgba(255,107,43,0.25);
+}
+
+.project-card.voip .project-link:hover {
+  background: rgba(255,107,43,0.18);
+  transform: translateX(3px);
+}
+
+/* ── CLOUD FOOTPRINT ── */
+.cloud-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.cloud-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  transition: all 0.25s;
+}
+
+.cloud-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+.cloud-card.aws { border-top: 2px solid #ff9900; }
+.cloud-card.gcp { border-top: 2px solid #4285f4; }
+.cloud-card.azure { border-top: 2px solid #0089d6; }
+.cloud-card.oracle { border-top: 2px solid #f80000; }
+.cloud-card.do { border-top: 2px solid #0080ff; }
+.cloud-card.linode { border-top: 2px solid #00b050; }
+
+.cloud-icon { font-size: 1.4rem; margin-bottom: 8px; }
+.cloud-provider { font-size: 0.6rem; font-family: 'DM Mono', monospace; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+.cloud-role { font-size: 0.92rem; font-weight: 700; margin-bottom: 10px; }
+.cloud-items { list-style: none; }
+.cloud-items li { font-size: 0.75rem; color: var(--muted); padding: 2px 0; display: flex; align-items: center; gap: 6px; }
+.cloud-items li::before { content: '→'; color: var(--accent); font-family: monospace; font-size: 0.7rem; }
+
+/* ── TECH GRID ── */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.tech-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 14px;
+  text-align: center;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.tech-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(0,229,255,0.06) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tech-card:hover { border-color: rgba(0,229,255,0.25); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,229,255,0.07); }
+.tech-card:hover::before { opacity: 1; }
+
+.tech-logo { width: 40px; height: 40px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; line-height: 1; }
+.tech-name { font-size: 0.75rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.tech-desc { font-size: 0.6rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+/* ── DIVIDER ── */
+.divider { border: none; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+
+/* ── FOOTER ── */
+footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 40px 24px;
+  border-top: 1px solid var(--border);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: fadeUp 0.6s ease forwards; opacity: 0; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+
+@media (max-width: 700px) {
+  .projects-grid { grid-template-columns: 1fr; }
+  .about-grid { grid-template-columns: 1fr; }
+  .about-card.full { grid-column: 1; }
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge fade-up">Voice Infrastructure · DevOps · Open to Work</div>
+  <h1 class="fade-up delay-1">
+    Sharrod Skinner
+    <span>Voice Infrastructure Engineer</span>
+  </h1>
+  <p class="fade-up delay-2">
+    Senior Voice Infrastructure Engineer specializing in SIP troubleshooting, SBC operations, and carrier-grade systems. I find what broke, read the logs others skip, and built the automation and monitoring stack around it to make sure it doesn't happen again.
+  </p>
+  <div class="hero-links fade-up delay-3">
+    <a href="https://github.com/sharrods/TWN" class="btn btn-primary" target="_blank" rel="noopener">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      TWN Bootcamp
+    </a>
+    <a href="https://github.com/sharrods/multi-cloud-voip-lab" class="btn btn-orange" target="_blank" rel="noopener">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Multi-Cloud VoIP Lab
+    </a>
+    <a href="https://github.com/sharrods" class="btn btn-secondary" target="_blank" rel="noopener">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      GitHub Profile
+    </a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats fade-up delay-4">
+  <div class="stat">
+    <div class="stat-number">16</div>
+    <div class="stat-label">Modules</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">59</div>
+    <div class="stat-label">Demo Projects</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">6</div>
+    <div class="stat-label">Cloud Providers</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">258</div>
+    <div class="stat-label">Commits</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">17</div>
+    <div class="stat-label">Monitor Targets</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">∞</div>
+    <div class="stat-label">Coffee</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="section">
+  <div class="section-tag">// about</div>
+  <h2 class="section-title">Why I Built All of This</h2>
+  <p class="section-sub">The honest version.</p>
+
+  <div class="about-grid">
+    <div class="about-card full">
+      <div class="about-card-tag">// the story</div>
+      <h3>From the SIP ladder to the infrastructure around it</h3>
+      <p>I needed something scalable and industry-grade that I could place in any cloud — or bare metal. The lab lets me play with real equipment and break things without the pressure of the job. I can simulate calls, test failover, work on deployment strategies like blue/green, and apply what I'm learning directly to my field.</p>
+      <p>Courses are good but you don't get to apply them to your industry. Now I do. I want to build VoIP architecture using DevOps methodologies — and next I'm going into DevSecOps. This is a journey of discovery and I'm documenting every step of it.</p>
+    </div>
+    <div class="about-card">
+      <div class="about-card-tag">// what I'm actually good at</div>
+      <h3>Operations first</h3>
+      <p>I find issues. I read logs. I troubleshoot SIP and read call ladders. I solve problems — sometimes in ways nobody else thought to try. The DevOps skills are real and growing, but they exist to make the voice infrastructure better. Not the other way around.</p>
+    </div>
+    <div class="about-card">
+      <div class="about-card-tag">// the differentiator</div>
+      <h3>Both sides of the wall</h3>
+      <p>Most DevOps engineers can't read a SIP trace. Most VoIP engineers can't build a Terraform module or write an Ansible role. I can do both — and I've shipped the infrastructure to prove it across 4 clouds simultaneously.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PROJECTS -->
+<div class="section">
+  <div class="section-tag">// projects</div>
+  <h2 class="section-title">The Work</h2>
+  <p class="section-sub">Two projects. One story. Click either to go deep.</p>
+
+  <div class="projects-grid">
+
+    <!-- TWN BOOTCAMP -->
+    <div class="project-card twn">
+      <div class="project-card-inner">
+        <div class="project-eyebrow">TechWorld With Nana · DevOps Bootcamp · 2026</div>
+        <h3>DevOps Bootcamp</h3>
+        <p>16 modules. 59 hands-on demo projects. Every major DevOps tool built, broken, and rebuilt from scratch — CI/CD pipelines, Kubernetes clusters, Terraform infrastructure, Ansible automation, and a full Prometheus monitoring stack. 251 commits documenting every step.</p>
+        <div class="project-stats">
+          <div class="project-stat">
+            <div class="project-stat-num">59</div>
+            <div class="project-stat-label">Projects</div>
+          </div>
+          <div class="project-stat">
+            <div class="project-stat-num">251</div>
+            <div class="project-stat-label">Commits</div>
+          </div>
+          <div class="project-stat">
+            <div class="project-stat-num">3</div>
+            <div class="project-stat-label">Clouds</div>
+          </div>
+          <div class="project-stat">
+            <div class="project-stat-num">16</div>
+            <div class="project-stat-label">Modules</div>
+          </div>
+        </div>
+        <div class="project-tags">
+          <span class="ptag">Jenkins</span>
+          <span class="ptag">Kubernetes</span>
+          <span class="ptag">Terraform</span>
+          <span class="ptag">Ansible</span>
+          <span class="ptag">Docker</span>
+          <span class="ptag">AWS EKS</span>
+          <span class="ptag">Prometheus</span>
+          <span class="ptag">Python</span>
+          <span class="ptag">Helm</span>
+        </div>
+        <a href="https://github.com/sharrods/TWN" class="project-link" target="_blank" rel="noopener">
+          View Bootcamp Repo →
+        </a>
+      </div>
+    </div>
+
+    <!-- VOIP LAB -->
+    <div class="project-card voip">
+      <div class="project-card-inner">
+        <div class="project-eyebrow">Production Lab · Voice + DevOps · 2025–2026</div>
+        <h3>Multi-Cloud VoIP Lab</h3>
+        <p>Production-grade carrier VoIP infrastructure across AWS, GCP, Oracle, and Azure. Each cloud deployed with a different strategy — Docker Compose, Terraform + Ansible, manual Docker. Real incidents, real fixes, real runbooks. 17 Prometheus targets. Grafana dashboards. Alertmanager routing to Slack, Gmail, and ntfy.</p>
+        <div class="project-stats">
+          <div class="project-stat">
+            <div class="project-stat-num">4</div>
+            <div class="project-stat-label">Clouds</div>
+          </div>
+          <div class="project-stat">
+            <div class="project-stat-num">17</div>
+            <div class="project-stat-label">Mon. Targets</div>
+          </div>
+          <div class="project-stat">
+            <div class="project-stat-num">13</div>
+            <div class="project-stat-label">GCP Services</div>
+          </div>
+          <div class="project-stat">
+            <div class="project-stat-num">7</div>
+            <div class="project-stat-label">Commits</div>
+          </div>
+        </div>
+        <div class="project-tags">
+          <span class="ptag">OpenSIPS</span>
+          <span class="ptag">FreeSWITCH</span>
+          <span class="ptag">RTPEngine</span>
+          <span class="ptag">Prometheus</span>
+          <span class="ptag">Grafana</span>
+          <span class="ptag">Terraform</span>
+          <span class="ptag">Ansible</span>
+          <span class="ptag">SIPp</span>
+          <span class="ptag">Twilio</span>
+        </div>
+        <a href="https://github.com/sharrods/multi-cloud-voip-lab" class="project-link" target="_blank" rel="noopener">
+          View VoIP Lab Repo →
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CLOUD FOOTPRINT -->
+<div class="section">
+  <div class="section-tag">// infrastructure</div>
+  <h2 class="section-title">6-Cloud Footprint</h2>
+  <p class="section-sub">Each cloud has a purpose. None of them are the same.</p>
+
+  <div class="cloud-grid">
+    <div class="cloud-card gcp">
+      <div class="cloud-icon">🔵</div>
+      <div class="cloud-provider">Google Cloud Platform</div>
+      <div class="cloud-role">VoIP Hub · Monitoring</div>
+      <ul class="cloud-items">
+        <li>OpenSIPS SBC</li>
+        <li>FreeSWITCH · RTPEngine</li>
+        <li>Prometheus + Grafana</li>
+        <li>Alertmanager</li>
+        <li>13 services · Docker Compose</li>
+      </ul>
+    </div>
+    <div class="cloud-card aws">
+      <div class="cloud-icon">☁️</div>
+      <div class="cloud-provider">Amazon Web Services</div>
+      <div class="cloud-role">Compute · VoIP · EKS</div>
+      <ul class="cloud-items">
+        <li>OpenSIPS · FreeSWITCH · RTPEngine</li>
+        <li>EKS Managed Kubernetes</li>
+        <li>EC2 · VPC · IAM · S3</li>
+        <li>Terraform + Ansible deploy</li>
+        <li>K8s migration candidate</li>
+      </ul>
+    </div>
+    <div class="cloud-card oracle">
+      <div class="cloud-icon">🔴</div>
+      <div class="cloud-provider">Oracle Cloud</div>
+      <div class="cloud-role">Load Balancer · Entry</div>
+      <ul class="cloud-items">
+        <li>OpenSIPS load balancer</li>
+        <li>FreeSWITCH · RTPEngine</li>
+        <li>Manual Docker (no Compose)</li>
+        <li>Emergency announcements</li>
+        <li>Hardest build in the lab</li>
+      </ul>
+    </div>
+    <div class="cloud-card azure">
+      <div class="cloud-icon">🔷</div>
+      <div class="cloud-provider">Microsoft Azure</div>
+      <div class="cloud-role">Control Plane · Bastion</div>
+      <ul class="cloud-items">
+        <li>SSH bastion · ProxyJump</li>
+        <li>sngrep · SIPp · SIP debug tools</li>
+        <li>SIPP regression testing</li>
+        <li>Justfile automation</li>
+        <li>Zero call traffic</li>
+      </ul>
+    </div>
+    <div class="cloud-card do">
+      <div class="cloud-icon">🌊</div>
+      <div class="cloud-provider">DigitalOcean</div>
+      <div class="cloud-role">CI/CD Infrastructure</div>
+      <ul class="cloud-items">
+        <li>Jenkins server (Docker)</li>
+        <li>Nexus artifact repository</li>
+        <li>Ansible control node</li>
+        <li>Bootcamp CI/CD pipelines</li>
+      </ul>
+    </div>
+    <div class="cloud-card linode">
+      <div class="cloud-icon">🟢</div>
+      <div class="cloud-provider">Linode (Akamai)</div>
+      <div class="cloud-role">Managed Kubernetes</div>
+      <ul class="cloud-items">
+        <li>LKE Kubernetes clusters</li>
+        <li>Helm chart deployments</li>
+        <li>Jenkins → LKE CD pipeline</li>
+        <li>Persistent volume storage</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- FULL STACK -->
+<div class="section">
+  <div class="section-tag">// tools & technologies</div>
+  <h2 class="section-title">The Full Stack</h2>
+  <p class="section-sub">Every tool used across both projects — bootcamp and lab combined.</p>
+
+  <div class="tech-grid">
+
+    <div class="tech-card">
+      <div class="tech-logo">🐧</div>
+      <div class="tech-name">Linux</div>
+      <div class="tech-desc">Ubuntu · Amazon Linux</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo"><svg viewBox="0 0 24 24" fill="#f05032" width="38" height="38"><path d="M23.546 10.93L13.067.452a1.55 1.55 0 0 0-2.188 0L8.708 2.627l2.76 2.76a1.838 1.838 0 0 1 2.327 2.341l2.658 2.66a1.838 1.838 0 1 1-1.103 1.03L12.7 8.977v6.366a1.838 1.838 0 1 1-1.508-.05V8.916a1.838 1.838 0 0 1-.997-2.416L7.44 3.742.452 10.73a1.55 1.55 0 0 0 0 2.188l10.48 10.477a1.55 1.55 0 0 0 2.189 0l10.425-10.424a1.55 1.55 0 0 0 0-2.04z"/></svg></div>
+      <div class="tech-name">Git</div>
+      <div class="tech-desc">Version Control</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo"><svg viewBox="0 0 24 24" fill="#2496ed" width="38" height="38"><path d="M13.983 11.078h2.119a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.119a.185.185 0 0 0-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 0 0 .186-.186V3.574a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 0 0 .186-.186V6.29a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 0 0 .184-.186V6.29a.185.185 0 0 0-.185-.185H8.1a.185.185 0 0 0-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 0 0 .185-.186V6.29a.185.185 0 0 0-.185-.185H5.136a.186.186 0 0 0-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 0 0 .184-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.185.185 0 0 0-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 0 0 .185-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.186.186 0 0 0-.186.185v1.888c0 .102.084.185.186.185m-2.92 0h2.12a.186.186 0 0 0 .184-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.185.185 0 0 0-.185.185v1.888c0 .102.083.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 0 0-.75.748 11.376 11.376 0 0 0 .692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 0 0 3.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288z"/></svg></div>
+      <div class="tech-name">Docker</div>
+      <div class="tech-desc">Containers · Compose</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo"><svg viewBox="0 0 24 24" fill="#d24939" width="36" height="36"><path d="M2.32 14.28c.05.26.13.52.22.78l-.7.4a.482.482 0 0 0-.18.65l.93 1.62a.5.5 0 0 0 .65.18l.72-.4c.33.27.7.52 1.08.7v.8a.5.5 0 0 0 .5.5h1.87a.5.5 0 0 0 .5-.5v-.8c.38-.2.75-.43 1.08-.7l.72.4c.22.13.5.05.65-.18l.93-1.62a.482.482 0 0 0-.18-.65l-.7-.4c.1-.26.17-.52.22-.78h.8a.5.5 0 0 0 .5-.5v-1.87a.5.5 0 0 0-.5-.5h-.8a6 6 0 0 0-.22-.78l.7-.4c.22-.13.3-.42.18-.65l-.93-1.62a.482.482 0 0 0-.65-.18l-.72.4a5.9 5.9 0 0 0-1.08-.7v-.8a.5.5 0 0 0-.5-.5H5.54a.5.5 0 0 0-.5.5v.8c-.38.2-.75.43-1.08.7l-.72-.4a.5.5 0 0 0-.65.18l-.93 1.62c-.13.22-.05.5.18.65l.7.4c-.1.26-.17.52-.22.78h-.8a.5.5 0 0 0-.5.5v1.87a.5.5 0 0 0 .5.5h.8zM6.47 11a2.47 2.47 0 1 1 0 4.94A2.47 2.47 0 0 1 6.47 11z"/></svg></div>
+      <div class="tech-name">Jenkins</div>
+      <div class="tech-desc">CI/CD · Pipelines</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo"><svg viewBox="0 0 24 24" fill="#ff9900" width="38" height="38"><path d="M6.763 10.036c0 .296.032.535.088.71.064.176.144.368.256.576.04.064.056.128.056.184 0 .08-.048.16-.152.24l-.504.336a.383.383 0 0 1-.208.072c-.08 0-.16-.04-.24-.112a2.47 2.47 0 0 1-.288-.376 6.18 6.18 0 0 1-.248-.472c-.624.736-1.408 1.104-2.352 1.104-.672 0-1.208-.192-1.6-.576-.392-.384-.6-.896-.6-1.536 0-.68.24-1.232.728-1.648.488-.416 1.136-.624 1.96-.624.272 0 .552.024.848.064.296.04.6.104.92.176v-.584c0-.608-.128-1.032-.376-1.28-.256-.248-.688-.368-1.304-.368-.28 0-.568.032-.864.104-.296.072-.584.16-.864.272a2.29 2.29 0 0 1-.28.104.488.488 0 0 1-.12.016c-.104 0-.16-.072-.16-.224v-.352c0-.112.016-.2.056-.248a.6.6 0 0 1 .216-.168c.28-.144.616-.264 1.008-.36a4.86 4.86 0 0 1 1.248-.152c.952 0 1.648.216 2.096.648.44.432.664 1.088.664 1.968v2.592zm-3.24 1.212c.264 0 .536-.048.824-.144.288-.096.544-.272.76-.512.128-.152.224-.32.272-.512.048-.192.08-.424.08-.696v-.336a6.873 6.873 0 0 0-.736-.136 6.017 6.017 0 0 0-.752-.048c-.536 0-.928.104-1.192.32-.264.216-.392.52-.392.912 0 .368.096.648.296.832.192.192.472.32.84.32z"/></svg></div>
+      <div class="tech-name">AWS</div>
+      <div class="tech-desc">EC2 · S3 · IAM · VPC</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo"><svg viewBox="0 0 24 24" fill="#326ce5" width="38" height="38"><path d="M10.204 14.35l.966 2.415-2.256-.547-.722 2.413-.973-2.415-2.415.548.722-2.414-2.09-1.226 2.414-.547.244-2.69 1.695 1.953 2.415-.547-1.227 2.09zM20.047 0l-2.415 2.09-2.09-2.09-1.226 2.415-2.415-1.227.548 2.415-2.415.548 2.09 1.226-1.226 2.415 2.415-.548 1.226 2.415 1.227-2.415 2.415.548-1.227-2.415 2.09-1.226-2.415-.548z"/></svg></div>
+      <div class="tech-name">Kubernetes</div>
+      <div class="tech-desc">Minikube · LKE · EKS</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo"><svg viewBox="0 0 24 24" fill="#7b42bc" width="36" height="36"><path d="M15.346 5.1v5.768l4.997 2.885V7.985zm-5.689 3.281l4.99 2.884v5.768l-4.99-2.884zM0 8.381v5.768l4.997 2.885V11.27zm9.657-5.765v5.768L4.66 11.269V5.501z"/></svg></div>
+      <div class="tech-name">Terraform</div>
+      <div class="tech-desc">IaC · AWS · Modules</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo"><svg viewBox="0 0 24 24" fill="#ee0000" width="36" height="36"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-.139 4.436l5.33 13.812-6.113-4.925-3.069 1.494zM12 19.564a7.564 7.564 0 0 1-7.564-7.564 7.564 7.564 0 0 1 7.564-7.564 7.564 7.564 0 0 1 7.564 7.564A7.564 7.564 0 0 1 12 19.564z"/></svg></div>
+      <div class="tech-name">Ansible</div>
+      <div class="tech-desc">Playbooks · Roles · Vault</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo"><svg viewBox="0 0 24 24" fill="#3776ab" width="36" height="36"><path d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05z"/></svg></div>
+      <div class="tech-name">Python</div>
+      <div class="tech-desc">Boto3 · Automation</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">📊</div>
+      <div class="tech-name">Prometheus</div>
+      <div class="tech-desc">Metrics · 17 Targets</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">📈</div>
+      <div class="tech-name">Grafana</div>
+      <div class="tech-desc">Dashboards · Alerts</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">🔔</div>
+      <div class="tech-name">Alertmanager</div>
+      <div class="tech-desc">Slack · Gmail · ntfy</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">⎈</div>
+      <div class="tech-name">Helm</div>
+      <div class="tech-desc">K8s Package Manager</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">📦</div>
+      <div class="tech-name">Nexus</div>
+      <div class="tech-desc">Artifact Repository</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">📋</div>
+      <div class="tech-name">Groovy</div>
+      <div class="tech-desc">Jenkinsfiles · Pipelines</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">🔧</div>
+      <div class="tech-name">Maven</div>
+      <div class="tech-desc">Build Tool · Java</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo"><svg viewBox="0 0 24 24" fill="#0080ff" width="36" height="36"><path d="M12.04 0C5.408 0 .103 5.549.103 12.26c0 6.816 5.304 12.364 11.937 12.364 6.632 0 11.937-5.548 11.937-12.365C23.977 5.549 18.673 0 12.04 0zm0 4.416v3.338c2.497 0 4.524 2.07 4.524 4.617 0 2.548-2.027 4.618-4.524 4.618H8.768v3.309h3.273v2.682H8.768v-2.682H5.525v-3.31H8.77V9.37H5.525V6.088H8.77V3.406c0-.001 3.271.001 3.271.001v1.01z"/></svg></div>
+      <div class="tech-name">DigitalOcean</div>
+      <div class="tech-desc">Jenkins · Nexus · CI/CD</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">🟢</div>
+      <div class="tech-name">Linode LKE</div>
+      <div class="tech-desc">Managed Kubernetes</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">🔐</div>
+      <div class="tech-name">Ansible Vault</div>
+      <div class="tech-desc">Secrets Management</div>
+    </div>
+
+    <!-- VOIP STACK -->
+    <div class="tech-card">
+      <div class="tech-logo" style="font-size:1.3rem;font-weight:700;color:#00e5ff;font-family:'Space Mono',monospace;">SIP</div>
+      <div class="tech-name">OpenSIPS</div>
+      <div class="tech-desc">SBC · Load Balancer</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">📞</div>
+      <div class="tech-name">FreeSWITCH</div>
+      <div class="tech-desc">Media Server · PBX</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo" style="font-size:1.1rem;font-weight:700;color:#ff6b2b;font-family:'Space Mono',monospace;">RTP</div>
+      <div class="tech-name">RTPEngine</div>
+      <div class="tech-desc">Media Relay · NAT</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">🧪</div>
+      <div class="tech-name">SIPp</div>
+      <div class="tech-desc">Load Testing · Regression</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">🔍</div>
+      <div class="tech-name">sngrep</div>
+      <div class="tech-desc">SIP Ladder Analysis</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">📡</div>
+      <div class="tech-name">Twilio</div>
+      <div class="tech-desc">PSTN · SIP Trunking</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo" style="font-size:1rem;font-weight:700;color:#00e5ff;font-family:'DM Mono',monospace;">just</div>
+      <div class="tech-name">Justfile</div>
+      <div class="tech-desc">Task Runner · Runbooks</div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-logo">🗄️</div>
+      <div class="tech-name">Redis</div>
+      <div class="tech-desc">Session State · Cache</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>
+    <strong>Sharrod Skinner</strong> ·
+    <a href="https://github.com/sharrods/TWN" target="_blank">TWN Bootcamp</a> ·
+    <a href="https://github.com/sharrods/multi-cloud-voip-lab" target="_blank">VoIP Lab</a> ·
+    <a href="https://github.com/sharrods" target="_blank">GitHub</a>
+  </p>
+  <p style="margin-top:8px;opacity:0.4;font-size:0.62rem;">
+    Senior Voice Infrastructure Engineer · Open to Work · 2026
+  </p>
+</footer>
+
+</body>
+</html>
